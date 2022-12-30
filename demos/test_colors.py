@@ -1,7 +1,7 @@
 from unicurses import *
 
 def print_in_middle(win, starty, startx, width, string):
-    if (win == None): win = stdscr
+    if win is None: win = stdscr
     y, x = getyx(win)
     if (startx != 0): x = startx
     if (starty != 0): y = starty

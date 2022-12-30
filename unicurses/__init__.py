@@ -67,7 +67,7 @@ def parse_ld_conf_file(fn):
 def get_libncursesw_paths():
     from ctypes.util import find_library
     lib_paths = [find_library('ncursesw'),find_library('panelw')]
-    
+
     if not lib_paths[0] or not lib_paths[1]:
         msg = ''
         if OPERATING_SYSTEM == 'Darwin':
@@ -76,7 +76,7 @@ def get_libncursesw_paths():
             msg = 'try `pkg search ncurses` then `pkg install ncurses-X.Y`'
         else:
             msg = 'No version of shared-libraries of ncurses found on this system, please try installing one\n try pgk\\apt\\etc. search ncurses and then install'
-        raise Exception('NCursesNotFound: ' + msg)
+        raise Exception(f'NCursesNotFound: {msg}')
 
     return lib_paths
 
@@ -92,15 +92,15 @@ except ImportError:
 
 if OPERATING_SYSTEM == 'Windows':
     import platform
-    
+
     if platform.architecture()[0] == '64bit':
         pdcurses = "64 bit binaries/pdcdllu/pdcurses.dll"  # wide-character (Unicode) &  UTF-8
     else:
         pdcurses = "32 bit binaries/pdcdllu/pdcurses.dll"  # wide-character (Unicode) &  UTF-8
-    
+
     current_dir = os.path.dirname(os.path.realpath(__file__))
-    path_to_pdcurses = current_dir + "/" + pdcurses
-    print("Expecting pdcurses at: " + path_to_pdcurses)
+    path_to_pdcurses = f"{current_dir}/{pdcurses}"
+    print(f"Expecting pdcurses at: {path_to_pdcurses}")
     if not (os.access(pdcurses, os.F_OK)
             or os.access(path_to_pdcurses, os.F_OK)):
         raise ImportError("""
@@ -108,7 +108,7 @@ if OPERATING_SYSTEM == 'Windows':
             Make sure PDCurses is in the same folder as UniCurses
             if you want to use UniCurses on a {} platform.
             """.format(sys.platform))
-    
+
     # We're on winXX, use pdcurses instead of native ncurses
     lib2 = lib1 = ctypes.CDLL(path_to_pdcurses)
 
@@ -120,7 +120,7 @@ else:
 
     lib1 = ctypes.CDLL(ncurses,mode=ctypes.RTLD_GLOBAL)
     lib2 = ctypes.CDLL(panel)
- 
+
     PDCURSES = False
     NCURSES  = True
 
@@ -175,11 +175,8 @@ def CSTR(s):
     It is used to pass strings to PDCurses which expects a C-formatted string.
     """
     global IS_CURSES_LIBRARY_UTF8
-    
-    if IS_CURSES_LIBRARY_UTF8:
-        return str(s).encode()
-    else:
-        return str(s).encode(code)
+
+    return str(s).encode() if IS_CURSES_LIBRARY_UTF8 else str(s).encode(code)
 
 
 if PDCURSES:
@@ -532,10 +529,11 @@ else:
     NCURSES_MOUSE_VERSION = 2  # TODO: Understand  how it is defined
  
     def NCURSES_MOUSE_MASK(b,m):
-        if NCURSES_MOUSE_VERSION > 1:
-            return ((m) << (((b) - 1) * 5))
-        else:
-            return ((m) << (((b) - 1) * 6))
+        return (
+            ((m) << (((b) - 1) * 5))
+            if NCURSES_MOUSE_VERSION > 1
+            else ((m) << (((b) - 1) * 6))
+        )
    
     NCURSES_BUTTON_RELEASED =  1
     NCURSES_BUTTON_PRESSED  =  2
@@ -770,12 +768,11 @@ def waddch(scr_id, ch, attr=A_NORMAL):
 def wadd_wch(scr_id, wch, attr=A_NORMAL):  # NEEDS_CHECK?
     if NCURSES:
         return lib1.wadd_wch(scr_id, ctypes.byref(cchar_t(attr, RCCHAR(wch))))
-    else:
-        oldattr = lib1.getattrs(scr_id)
-        lib1.wattrset(scr_id, attr)            
-        ret = lib1.wadd_wch(scr_id, RCCHAR(wch))  
-        lib1.wattrset(scr_id, oldattr)        
-        return ret
+    oldattr = lib1.getattrs(scr_id)
+    lib1.wattrset(scr_id, attr)
+    ret = lib1.wadd_wch(scr_id, RCCHAR(wch))
+    lib1.wattrset(scr_id, oldattr)
+    return ret
         #return lib1.wadd_wch(scr_id, CCHAR(wch) | attr )  # ??? Why no working
 
 
@@ -923,10 +920,7 @@ def color_content(color_number):
 
 
 def color_pair(color_number):
-    if PDCURSES:
-        return PD_COLOR_PAIR(color_number)
-    else:
-        return NC_COLOR_PAIR(color_number)
+    return PD_COLOR_PAIR(color_number) if PDCURSES else NC_COLOR_PAIR(color_number)
 
 
 def COLOR_PAIR(n):
@@ -1272,12 +1266,11 @@ def mvwaddch(scr_id, y, x, ch, attr=A_NORMAL):
 def mvwadd_wch(scr_id, y, x, wch, attr=A_NORMAL):
     if NCURSES:
         return lib1.mvwadd_wch(scr_id, y, x, ctypes.byref(cchar_t(attr, RCCHAR(wch))))
-    else:
-        oldattr = lib1.getattrs(scr_id)
-        lib1.wattrset(scr_id, attr)            
-        ret = lib1.mvwadd_wch(scr_id, y, x, RCCHAR(wch))  
-        lib1.wattrset(scr_id, oldattr)        
-        return ret
+    oldattr = lib1.getattrs(scr_id)
+    lib1.wattrset(scr_id, attr)
+    ret = lib1.mvwadd_wch(scr_id, y, x, RCCHAR(wch))
+    lib1.wattrset(scr_id, oldattr)
+    return ret
         
 
 def mvwaddstr(scr_id, y, x, cstr, attr="NO_USE"):
@@ -1525,12 +1518,9 @@ def wsetscrreg(scr_id, top, bottom):
 
 def setsyx(y, x):
     global PDC_LEAVEOK
-    
+
     curscr = PD_GET_CURSCR()
-    if y == x == -1:
-        PDC_LEAVEOK = True
-    else:
-        PDC_LEAVEOK = False
+    PDC_LEAVEOK = y == x == -1
     return lib1.setsyx(y, x)
 
 
@@ -1918,9 +1908,7 @@ def del_panel(pan_id):
 
 def panel_hidden(pan_id):	
     mode = lib2.panel_hidden(pan_id)
-    if mode == OK:
-        return True
-    return False
+    return mode == OK
 
 
 def hide_panel(pan_id):

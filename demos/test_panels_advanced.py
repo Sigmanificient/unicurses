@@ -20,17 +20,17 @@ def win_show(win, label, label_color):
 
 
 def print_in_middle(win, starty, startx, width, string, color):
-    if (win == None): win = stdscr
+    if win is None: win = stdscr
     y, x = getyx(win)
 
     if (startx != 0): x = startx
     if (starty != 0): y = starty
     if (width  == 0): width = 80
-    
+
     length = len(string)
     temp   = (width - length) / 2
     x      = startx + int(temp)
-    
+
     wattron(win, color)
     mvwaddstr(win, y, x, string)
     wattroff(win, color)
@@ -40,8 +40,8 @@ def print_in_middle(win, starty, startx, width, string, color):
 def init_wins(wins, n):
     y = 2
     x = 10
-    
-    for i in range(0, n):
+
+    for i in range(n):
         wins[i] = newwin(10, 40, y, x)
         label = str.format("Window number {0}", i + 1)
         win_show(wins[i], label, i + 1)
@@ -97,7 +97,7 @@ def main():
     top = my_panels[2]
 
     ch = -1
-    while ( (ch != CCHAR('q')) and (ch != CCHAR('Q')) ):
+    while ch not in [CCHAR('q'), CCHAR('Q')]:
         ch = getch()
         if ch == 9:
             top = panel_userptr(top)

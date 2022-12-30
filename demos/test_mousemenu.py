@@ -13,28 +13,22 @@ c = 0
 
 def print_menu(menu_win, highlight):
     x = 2
-    y = 2
     box(menu_win, 0, 0)
-    for i in range(0, n_choices):
+    for y, i in enumerate(range(n_choices), start=2):
         if (highlight == i + 1):
             wattron(menu_win, A_REVERSE)
             mvwaddstr(menu_win, y, x, choices[i])
             wattroff(menu_win, A_REVERSE)
         else:
             mvwaddstr(menu_win, y, x, choices[i])
-        y += 1
     wrefresh(menu_win)
 
 def report_choice(mouse_x, mouse_y):
     i = startx + 2
     j = starty + 3
-    for choice in range(0, n_choices):
+    for choice in range(n_choices):
         if (mouse_y == j + choice) and (mouse_x >= i) and (mouse_x <= i + len(choices[choice])):
-            if choice == n_choices - 1:
-                return -1
-            else:
-                return choice + 1
-            break
+            return -1 if choice == n_choices - 1 else choice + 1
 
 stdscr = initscr()
 clear()
