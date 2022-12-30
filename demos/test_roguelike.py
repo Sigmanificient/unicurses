@@ -102,15 +102,24 @@ def fight():
             break
         if test_squares[i] == OBJ_STATUE:
             MSG += "you smash the statue to pieces!"
-            if i==0: LEVEL_MAP[PLAYER_Y-1][PLAYER_X-1] = ' '
-            if i==1: LEVEL_MAP[PLAYER_Y-1][PLAYER_X] = ' '
-            if i==2: LEVEL_MAP[PLAYER_Y-1][PLAYER_X+1] = ' '
-            if i==3: LEVEL_MAP[PLAYER_Y][PLAYER_X-1] = ' '
-            if i==4: LEVEL_MAP[PLAYER_Y][PLAYER_X] = ' '
-            if i==5: LEVEL_MAP[PLAYER_Y][PLAYER_X+1] = ' '
-            if i==6: LEVEL_MAP[PLAYER_Y+1][PLAYER_X-1] = ' '
-            if i==7: LEVEL_MAP[PLAYER_Y+1][PLAYER_X] = ' '
-            if i==8: LEVEL_MAP[PLAYER_Y+1][PLAYER_X+1] = ' '
+            if i == 0:
+                LEVEL_MAP[PLAYER_Y-1][PLAYER_X-1] = ' '
+            elif i == 1:
+                LEVEL_MAP[PLAYER_Y-1][PLAYER_X] = ' '
+            elif i == 2:
+                LEVEL_MAP[PLAYER_Y-1][PLAYER_X+1] = ' '
+            elif i == 3:
+                LEVEL_MAP[PLAYER_Y][PLAYER_X-1] = ' '
+            elif i == 4:
+                LEVEL_MAP[PLAYER_Y][PLAYER_X] = ' '
+            elif i == 5:
+                LEVEL_MAP[PLAYER_Y][PLAYER_X+1] = ' '
+            elif i == 6:
+                LEVEL_MAP[PLAYER_Y+1][PLAYER_X-1] = ' '
+            elif i == 7:
+                LEVEL_MAP[PLAYER_Y+1][PLAYER_X] = ' '
+            elif i == 8:
+                LEVEL_MAP[PLAYER_Y+1][PLAYER_X+1] = ' '
 
 # the main loop
 

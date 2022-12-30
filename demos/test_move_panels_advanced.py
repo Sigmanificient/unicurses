@@ -2,21 +2,21 @@ from unicurses import *
 
 
 def print_in_middle(window, starty, startx, width, string, color):
-    if (window == None): window = stdscr
+    if window is None: window = stdscr
 
     y, x = getyx(window)
     if (startx != 0): x = startx
     if (starty != 0): y = starty
     if (width == 0): width = 80
-    
+
     length = len(string)
     temp = (width - length) / 2
     x = startx + int(temp)
-    
+
     wattron(window, color)
     mvwaddstr(window, y, x, string)
     wattroff(window, color)
-    
+
     refresh()
 
 
@@ -110,9 +110,16 @@ if __name__ == "__main__":
     my_panels = [0] * 3
 
     for i in range(3):
-        my_wins  [i] = new_window_with(height, width, starty, startx, "Window number " + str(i + 1), COLOR_PAIR(i+1))
+        my_wins[i] = new_window_with(
+            height,
+            width,
+            starty,
+            startx,
+            f"Window number {str(i + 1)}",
+            COLOR_PAIR(i + 1),
+        )
         my_panels[i] = new_panel(my_wins[i])
-        
+
         startx += 7
         starty += 3
 
@@ -128,7 +135,7 @@ if __name__ == "__main__":
     temp_win       = panel_window(topPanel)
     starty, startx = getbegyx(temp_win)
 
-    while ( (ch != CCHAR('q')) and (ch != CCHAR('Q')) ):
+    while ch not in [CCHAR('q'), CCHAR('Q')]:
         ch = getch()
 
         if ch == 9:
@@ -136,20 +143,20 @@ if __name__ == "__main__":
             top_panel(topPanel)
             my_win = panel_window(topPanel)
             starty, startx = getbegyx(my_win)
-        elif (ch == KEY_LEFT):                                              # KEY_XY won't work on vscode, run it on your terminal
-            if startx - 1 > 0:
+        elif (ch == KEY_LEFT):                                      # KEY_XY won't work on vscode, run it on your terminal
+            if startx > 1:
                 startx -= 1
                 move_panel(topPanel,starty, startx)
         elif (ch == KEY_RIGHT) and (startx + width  <  COLS - 1):
                 startx += 1
                 move_panel(topPanel,starty, startx)
-        elif (ch == KEY_UP   ) and (starty - 1 > 0):
-                starty -= 1
-                move_panel(topPanel,starty, startx)
+        elif ch == KEY_UP and starty > 1:
+            starty -= 1
+            move_panel(topPanel,starty, startx)
         elif (ch == KEY_DOWN ) and (starty + height < LINES - 1):
                 starty += 1
                 move_panel(topPanel,starty, startx)
-        
+
         update_panels()
         doupdate()
 

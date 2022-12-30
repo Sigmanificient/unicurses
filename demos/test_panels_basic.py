@@ -16,7 +16,7 @@ my_wins[0] = newwin(lines, cols, y, x)
 my_wins[1] = newwin(lines, cols, y + 1, x + 5)
 my_wins[2] = newwin(lines, cols, y + 2, x + 10)
 
-for i in range(0, 3):
+for i in range(3):
     box(my_wins[i], 0, 0)
 
 my_panels[0] = new_panel(my_wins[0])

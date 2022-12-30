@@ -14,16 +14,14 @@ c = 0
 
 def print_menu(menu_win, highlight):
     x = 2
-    y = 2
     box(menu_win, 0, 0)
-    for i in range(0, n_choices):
+    for y, i in enumerate(range(n_choices), start=2):
         if (highlight == i + 1):
             wattron(menu_win, A_REVERSE)
             mvwaddstr(menu_win, y, x, choices[i])
             wattroff(menu_win, A_REVERSE)
         else:
             mvwaddstr(menu_win, y, x, choices[i])
-        y += 1
     wrefresh(menu_win)
 
 stdscr = initscr()

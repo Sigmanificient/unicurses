@@ -28,10 +28,10 @@ refresh()
 my_win = create_newwin(height, width, starty, startx)
 
 ch = 0
-while ( (ch != CCHAR('q')) and (ch != CCHAR('Q')) ):
+while ch not in [CCHAR('q'), CCHAR('Q')]:
     ch = getch()
     if ch == KEY_LEFT:
-        if startx - 1 >= 0:
+        if startx >= 1:
             destroy_win(my_win)
             startx -= 1
             my_win = create_newwin(height, width, starty, startx)
@@ -41,7 +41,7 @@ while ( (ch != CCHAR('q')) and (ch != CCHAR('Q')) ):
             startx += 1
             my_win = create_newwin(height, width, starty, startx)
     elif ch == KEY_UP:
-        if starty - 1 > 0:
+        if starty > 1:
             destroy_win(my_win)
             starty -= 1
             my_win = create_newwin(height, width, starty, startx)
