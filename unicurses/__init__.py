@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 
 # UniCurses -- A unified multiplatform Curses provider library for Python 2.x/3.x
 # Copyright (C) 2010 by Michael Kamensky.
@@ -27,7 +27,7 @@ import locale, platform, sys, os, re
 
 global lib1
 global NCURSES   # Not needed but makes things more visually appealing? it could just be 'if not PDCURSES'
-global PDCURSES 
+global PDCURSES
 global PYCURSES  # Not sure if i would want to keep the support for the native python's module-ncurses
 global PDC_LEAVEOK
 global IS_CURSES_LIBRARY_UTF8
@@ -36,7 +36,7 @@ PDC_LEAVEOK            = False  # LeaveOK emulation in PDC
 NCURSES                = False  # Native curses support
 PDCURSES               = False  # Public Domain Curses support
 UCS_DEFAULT_WRAPPER    = ""	    # A constant for the default wrapper (ucs_reconfigure)
-IS_CURSES_LIBRARY_UTF8 = True   # Determine if the library iscompiled with UTF-8 support 
+IS_CURSES_LIBRARY_UTF8 = True   # Determine if the library iscompiled with UTF-8 support
 stdscr                 = -1	    # A pointer to the standard screen
 lib1                   = None   # PD\NCurses library (dll/.so)
 lib2                   = None   # For NCurses's panel.so library else lib2=lib1
@@ -67,7 +67,7 @@ def parse_ld_conf_file(fn):
 def get_libncursesw_paths():
     from ctypes.util import find_library
     lib_paths = [find_library('ncursesw'),find_library('panelw')]
-    
+
     if not lib_paths[0] or not lib_paths[1]:
         msg = ''
         if OPERATING_SYSTEM == 'Darwin':
@@ -92,12 +92,12 @@ except ImportError:
 
 if OPERATING_SYSTEM == 'Windows':
     import platform
-    
+
     if platform.architecture()[0] == '64bit':
         pdcurses = "64 bit binaries/pdcdllu/pdcurses.dll"  # wide-character (Unicode) &  UTF-8
     else:
         pdcurses = "32 bit binaries/pdcdllu/pdcurses.dll"  # wide-character (Unicode) &  UTF-8
-    
+
     current_dir = os.path.dirname(os.path.realpath(__file__))
     path_to_pdcurses = current_dir + "/" + pdcurses
     print("Expecting pdcurses at: " + path_to_pdcurses)
@@ -108,7 +108,7 @@ if OPERATING_SYSTEM == 'Windows':
             Make sure PDCurses is in the same folder as UniCurses
             if you want to use UniCurses on a {} platform.
             """.format(sys.platform))
-    
+
     # We're on winXX, use pdcurses instead of native ncurses
     lib2 = lib1 = ctypes.CDLL(path_to_pdcurses)
 
@@ -120,7 +120,7 @@ else:
 
     lib1 = ctypes.CDLL(ncurses,mode=ctypes.RTLD_GLOBAL)
     lib2 = ctypes.CDLL(panel)
- 
+
     PDCURSES = False
     NCURSES  = True
 
@@ -132,17 +132,17 @@ else:
 # !!! THIS IS NOT FOR GENERAL USE AND WILL IN MOST CASES BREAK UNICURSES !!!
 # !!! EVEN IF IT DOESN'T MAKE YOUR APP CRASH OR HANG, IT MAY BREAK PORTABILITY !!!
 # !!! IF YOU DON'T KNOW WHAT THIS MAY BE USED FOR, YOU DON'T NEED TO USE IT !!!
-    
+
 def ucs_reconfigure(wrapper_pdcurses = None, wrapper_ncurses = None, wrapper_ncurses_panel = None, is_utf8_dll = True):
     global IS_CURSES_LIBRARY_UTF8
     global lib1
     global lib2
     IS_CURSES_LIBRARY_UTF8 = is_utf8_dll
-    
+
     if wrapper_ncurses and wrapper_ncurses_panel:
         lib1 = ctypes.CDLL(wrapper_ncurses,mode=ctypes.RTLD_GLOBAL)
         lib2 = ctypes.CDLL(wrapper_ncurses_panel)
-  
+
     if wrapper_pdcurses:
         lib2 = lib1 = ctypes.CDLL(wrapper_pdcurses)	
 #endregion +++ Main ++
@@ -159,7 +159,7 @@ class MEVENT(ctypes.Structure):
                 ("z", ctypes.c_int),
                 ("bstate", ctypes.c_ulong)]
 
-# A NC structure for cchar_t    
+# A NC structure for cchar_t
 if NCURSES:
     CCHARW_MAX = 5
     WCHAR_5    = ctypes.c_wchar * CCHARW_MAX
@@ -167,7 +167,7 @@ if NCURSES:
         _fields_ = [("attr", ctypes.c_int),
                     ("chars", WCHAR_5)]
 #endregion -- STRUCTS --
-    
+
 
 def CSTR(s):
     """
@@ -175,7 +175,7 @@ def CSTR(s):
     It is used to pass strings to PDCurses which expects a C-formatted string.
     """
     global IS_CURSES_LIBRARY_UTF8
-    
+
     if IS_CURSES_LIBRARY_UTF8:
         return str(s).encode()
     else:
@@ -199,11 +199,11 @@ if PDCURSES:
 
 else:
     NCURSES_ATTR_SHIFT = 8
-        
-    def NCURSES_BITS(mask,shift): 
+
+    def NCURSES_BITS(mask,shift):
         return (mask << ((shift) + NCURSES_ATTR_SHIFT))
- 
-    def NC_COLOR_PAIR(n): 
+
+    def NC_COLOR_PAIR(n):
         return (NCURSES_BITS((n), 0) & A_COLOR)
 #endregion --- PDCurses/NCurses ncurses.h macro wrappers and other prereqs ---
 
@@ -214,7 +214,7 @@ if PDCURSES:
     #region ++ Attributs & Colors (PDC) ++
     PDC_COLOR_SHIFT  = 24
     PDC_ATTR_SHIFT   = 19
- 
+
     # Attributes
     A_ALTCHARSET = 0x00010000
     A_RIGHT      = 0x00020000
@@ -236,10 +236,10 @@ if PDCURSES:
     A_ATTRIBUTES = 0xffff0000
     A_COLOR      = 0xff000000
     A_CHARTEXT   = 0x0000ffff
- 
+
     A_RIGHTLINE  = A_RIGHT
     A_LEFTLINE   = A_LEFT
- 
+
     # Colors
     COLOR_BLACK   = 0
     COLOR_BLUE    = 1
@@ -250,8 +250,8 @@ if PDCURSES:
     COLOR_YELLOW  = (COLOR_RED  | COLOR_GREEN)
     COLOR_WHITE   = 7
     #endregion -- Attributs & Colors (PDC) --
- 
-    
+
+
     #region ++ Key mapping (PDC) ++
     KEY_CODE_YES  = 0x100  # If get_wch() gives a key code
     KEY_BREAK     = 0x101  # Not on PC KBD
@@ -346,14 +346,14 @@ if PDCURSES:
     KEY_B2        = 0x1c5
     KEY_C1        = 0x1c7
     KEY_C3        = 0x1c9
-    KEY_MOUSE     = 0x21b  
+    KEY_MOUSE     = 0x21b
     KEY_RESIZE    = 0x222
     KEY_SDOWN     = 0x224
     KEY_MAX       = KEY_SDOWN
-    #KEY_EVENT    = PDC_KEY_EVENT 
+    #KEY_EVENT    = PDC_KEY_EVENT
     #endregion -- Key mapping (PDC) --
-  
-  
+
+
     #region ++ Mouse mapping (PDC) ++
     BUTTON1_RELEASED       = 0x00000001
     BUTTON1_PRESSED        = 0x00000002
@@ -392,7 +392,7 @@ if PDCURSES:
     ALL_MOUSE_EVENTS       = 0x1fffffff
     REPORT_MOUSE_POSITION  = 0x20000000
     #endregion -- Mouse mapping (PDC) --
- 
+
 else:
     #region ++ Attributs & Colors (NC) ++
     # Attributes
@@ -416,7 +416,7 @@ else:
     A_TOP        = NCURSES_BITS(1,21)
     A_VERTICAL   = NCURSES_BITS(1,22)
     A_ITALIC	 = NCURSES_BITS(1,23)
- 
+
     # Colors
     COLOR_BLACK   = 0
     COLOR_RED     = 1
@@ -427,8 +427,8 @@ else:
     COLOR_CYAN    = 6
     COLOR_WHITE   = 7
     #endregion -- Attributs & Colors (NC) --
-    
-    
+
+
     #region ++ Key mapping (NC) ++
     KEY_CODE_YES  = 0o400  # A wchar_t contains a key code
     KEY_MIN       = 0o401  # Minimum curses key
@@ -526,17 +526,17 @@ else:
     KEY_EVENT     = 0o633  # We were interrupted by an event
     KEY_MAX       = 0o777  # Maximum key value is 0633
     #endregion -- Key mapping (NC) --
-    
- 
+
+
     #region ++ Mouse mapping (NC) ++
     NCURSES_MOUSE_VERSION = 2  # TODO: Understand  how it is defined
- 
+
     def NCURSES_MOUSE_MASK(b,m):
         if NCURSES_MOUSE_VERSION > 1:
             return ((m) << (((b) - 1) * 5))
         else:
             return ((m) << (((b) - 1) * 6))
-   
+
     NCURSES_BUTTON_RELEASED =  1
     NCURSES_BUTTON_PRESSED  =  2
     NCURSES_BUTTON_CLICKED  =  4
@@ -567,13 +567,13 @@ else:
     BUTTON4_CLICKED        = NCURSES_MOUSE_MASK(4, NCURSES_BUTTON_CLICKED)
     BUTTON4_DOUBLE_CLICKED = NCURSES_MOUSE_MASK(4, NCURSES_DOUBLE_CLICKED)
     BUTTON4_TRIPLE_CLICKED = NCURSES_MOUSE_MASK(4, NCURSES_TRIPLE_CLICKED)
- 
+
     BUTTON5_RELEASED       = NCURSES_MOUSE_MASK(5, NCURSES_BUTTON_RELEASED)
     BUTTON5_PRESSED        = NCURSES_MOUSE_MASK(5, NCURSES_BUTTON_PRESSED)
     BUTTON5_CLICKED        = NCURSES_MOUSE_MASK(5, NCURSES_BUTTON_CLICKED)
     BUTTON5_DOUBLE_CLICKED = NCURSES_MOUSE_MASK(5, NCURSES_DOUBLE_CLICKED)
     BUTTON5_TRIPLE_CLICKED = NCURSES_MOUSE_MASK(5, NCURSES_TRIPLE_CLICKED)
- 
+
     if NCURSES_MOUSE_VERSION > 1:
         BUTTON_CTRL  = NCURSES_MOUSE_MASK(6, 1)
         BUTTON_SHIFT = NCURSES_MOUSE_MASK(6, 2)
@@ -581,18 +581,18 @@ else:
 
         REPORT_MOUSE_POSITION = NCURSES_MOUSE_MASK(6, 10)
     else:
-        BUTTON_CTRL  = NCURSES_MOUSE_MASK(5, 1) 
+        BUTTON_CTRL  = NCURSES_MOUSE_MASK(5, 1)
         BUTTON_SHIFT = NCURSES_MOUSE_MASK(5, 2)
         BUTTON_ALT   = NCURSES_MOUSE_MASK(5, 4)
-  
+
         REPORT_MOUSE_POSITION = NCURSES_MOUSE_MASK(5, 10)
 
     ALL_MOUSE_EVENTS = (REPORT_MOUSE_POSITION - 1)
     #endregion -- Mouse mapping (NC) --
 #endregion --- CONSTANTS: PDCurses\Ncurses ncurses.h ---
 
- 
- 
+
+
 #region +++ CONSTANTS: Platform-independent +++
 # General
 OK = 0
@@ -603,7 +603,7 @@ def RCCHAR(ch):
     """Reverse of CCHAR function"""
     if   type(ch) == int: return chr(ch)
     elif type(ch) == str: return ch
-    else: 
+    else:
         raise Exception("RCCHAR: can't parse a non-char/non-int value.")
 
 def CCHAR(ch):
@@ -772,9 +772,9 @@ def wadd_wch(scr_id, wch, attr=A_NORMAL):  # NEEDS_CHECK?
         return lib1.wadd_wch(scr_id, ctypes.byref(cchar_t(attr, RCCHAR(wch))))
     else:
         oldattr = lib1.getattrs(scr_id)
-        lib1.wattrset(scr_id, attr)            
-        ret = lib1.wadd_wch(scr_id, RCCHAR(wch))  
-        lib1.wattrset(scr_id, oldattr)        
+        lib1.wattrset(scr_id, attr)
+        ret = lib1.wadd_wch(scr_id, RCCHAR(wch))
+        lib1.wattrset(scr_id, oldattr)
         return ret
         #return lib1.wadd_wch(scr_id, CCHAR(wch) | attr )  # ??? Why no working
 
@@ -894,7 +894,7 @@ def wbkgdset(scr_id, ch, attr=A_NORMAL):
 
 def wborder(scr_id, ls=ACS_VLINE, rs=ACS_VLINE, ts=ACS_HLINE, bs=ACS_HLINE,
             tl=ACS_ULCORNER, tr=ACS_URCORNER, bl=ACS_LLCORNER, br=ACS_LRCORNER):
-    
+
     return lib1.wborder(scr_id, ls, rs, ts, bs, tl, tr, bl, br) # same as wborder_set (it supports unicode by default)
 
 
@@ -1036,7 +1036,7 @@ def getbegyx(scr_id):
 
 
 def wgetch(scr_id):
-    return lib1.wgetch(scr_id) 
+    return lib1.wgetch(scr_id)
 
 
 def wget_wch(scr_id): # NEEDS_CHECK? # https://stackoverflow.com/questions/1081456/wchar-t-vs-wint-t
@@ -1067,7 +1067,7 @@ def getmaxx(scr_id):
 
 def getmouse():
     m_event = MEVENT()
-    if PDCURSES: lib1.nc_getmouse(ctypes.byref(m_event))  # ? https://github.com/wmcbrine/PDCurses/blob/f1cd4f4569451a5028ddf3d3c202f0ad6b1ae446/pdcurses/mouse.c#L105 
+    if PDCURSES: lib1.nc_getmouse(ctypes.byref(m_event))  # ? https://github.com/wmcbrine/PDCurses/blob/f1cd4f4569451a5028ddf3d3c202f0ad6b1ae446/pdcurses/mouse.c#L105
     else:        lib1.getmouse   (ctypes.byref(m_event))
     return (m_event.id, m_event.x, m_event.y, m_event.z, m_event.bstate)
 
@@ -1086,7 +1086,7 @@ def wgetstr(scr_id):
 
 def getsyx():
     global PDC_LEAVEOK
-    
+
     if PDC_LEAVEOK:
         return (-1, -1)
     curscr = PD_GET_CURSCR()
@@ -1153,7 +1153,7 @@ def init_pair(pair_number, fg, bg):
 
 def initscr():
     global stdscr
-    
+
     stdscr = ctypes.c_void_p(lib1.initscr())
     return stdscr
 
@@ -1239,7 +1239,7 @@ def set_tabsize(size):
 
 def leaveok(scr_id, yes):
     global PDC_LEAVEOK
-    
+
     if scr_id.value == PD_GET_CURSCR().value:
         PDC_LEAVEOK = yes
     return lib1.leaveok(scr_id, yes)
@@ -1274,11 +1274,11 @@ def mvwadd_wch(scr_id, y, x, wch, attr=A_NORMAL):
         return lib1.mvwadd_wch(scr_id, y, x, ctypes.byref(cchar_t(attr, RCCHAR(wch))))
     else:
         oldattr = lib1.getattrs(scr_id)
-        lib1.wattrset(scr_id, attr)            
-        ret = lib1.mvwadd_wch(scr_id, y, x, RCCHAR(wch))  
-        lib1.wattrset(scr_id, oldattr)        
+        lib1.wattrset(scr_id, attr)
+        ret = lib1.mvwadd_wch(scr_id, y, x, RCCHAR(wch))
+        lib1.wattrset(scr_id, oldattr)
         return ret
-        
+
 
 def mvwaddstr(scr_id, y, x, cstr, attr="NO_USE"):
     if attr != "NO_USE":
@@ -1525,7 +1525,7 @@ def wsetscrreg(scr_id, top, bottom):
 
 def setsyx(y, x):
     global PDC_LEAVEOK
-    
+
     curscr = PD_GET_CURSCR()
     if y == x == -1:
         PDC_LEAVEOK = True
